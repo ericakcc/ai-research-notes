@@ -15,6 +15,9 @@ topics/**/datasets/
 # Papers (PDFs - download separately)
 topics/**/papers/**/*.pdf
 
+# Corning proprietary docs
+topics/computer-vision/docs/康寧*.md
+
 # IDE
 .idea/
 .vscode/
