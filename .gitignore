@@ -18,6 +18,9 @@ topics/**/papers/**/*.pdf
 # Corning proprietary docs
 topics/computer-vision/docs/康寧*.md
 
+# Claude Code local settings
+.claude/settings.local.json
+
 # IDE
 .idea/
 .vscode/
