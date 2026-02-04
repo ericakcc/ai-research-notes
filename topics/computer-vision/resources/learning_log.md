@@ -4,18 +4,18 @@
 
 ### YOLOv1 (Redmon et al., 2016)
 
-- [ ] First pass: Abstract, Conclusion, Figures
-- [ ] Second pass: Architecture details (grid, boxes, classes)
-- [ ] Understand: Loss function design (localization + confidence + classification)
+- [x] First pass: Abstract, Conclusion, Figures
+- [x] Second pass: Architecture details (grid, boxes, classes)
+- [x] Understand: Loss function design (localization + confidence + classification)
 - [ ] Implementation: Grid-based detection head in PyTorch
 - [ ] Implementation: IoU calculation + NMS
 - [ ] Checkpoint: Detect objects on VOC subset
 
 ### YOLOv2 (Redmon & Farhadi, 2017)
 
-- [ ] First pass: Improvements over v1
-- [ ] Understand: Anchor boxes via k-means clustering
-- [ ] Understand: Batch normalization, multi-scale training
+- [x] First pass: Improvements over v1
+- [x] Understand: Anchor boxes via k-means clustering
+- [x] Understand: Batch normalization, multi-scale training
 - [ ] Implementation: Add anchor boxes + passthrough layer
 - [ ] Checkpoint: Compare v1 vs v2 performance
 
