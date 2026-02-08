@@ -24,3 +24,6 @@ topics/computer-vision/docs/康寧*.md
 # IDE
 .idea/
 .vscode/
+
+# macOS
+.DS_Store

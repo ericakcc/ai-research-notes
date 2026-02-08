@@ -3,7 +3,12 @@ name = "ai-research-notes"
 version = "0.1.0"
 description = "Multi-topic ML/AI research and learning repository"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "matplotlib>=3.10.8",
+    "pillow>=12.1.0",
+    "torch>=2.10.0",
+    "torchvision>=0.25.0",
+]
 
 [dependency-groups]
 dev = [
