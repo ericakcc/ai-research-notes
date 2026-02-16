@@ -5,6 +5,7 @@ Architecture follows Ha & Schmidhuber (2018):
   Decoder: FC -> unflatten -> 4 ConvTranspose layers (stride=2)
 """
 
+import torch
 import torch.nn as nn
 from torch import Tensor
 
@@ -87,11 +88,6 @@ class ConvVAE(nn.Module):
     def reparameterize(self, mu: Tensor, log_var: Tensor) -> Tensor:
         """Sample z from q(z|x) using the reparameterization trick.
 
-        TODO(human): Implement the reparameterization trick.
-
-        Given mu and log_var from the encoder, sample a latent vector z
-        such that gradients can flow back through mu and log_var.
-
         Args:
             mu: (B, latent_dim) — mean of the approximate posterior.
             log_var: (B, latent_dim) — log variance of the approximate posterior.
@@ -99,7 +95,9 @@ class ConvVAE(nn.Module):
         Returns:
             z: (B, latent_dim) — sampled latent vector.
         """
-        raise NotImplementedError("Implement the reparameterization trick")
+        std = torch.exp(0.5 * log_var)
+        eps = torch.randn_like(mu)
+        return mu + std * eps
 
     def forward(self, x: Tensor) -> tuple[Tensor, Tensor, Tensor, Tensor]:
         """Full forward pass: encode -> reparameterize -> decode.
