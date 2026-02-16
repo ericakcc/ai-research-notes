@@ -8,7 +8,7 @@ A structured learning project for World Models research, progressing through 4 p
 1. **Foundations** - VMC architecture (VAE + RNN) with CarRacing
 2. **Standard** - DreamerV3 RSSM framework with Atari 100k
 3. **High-Fidelity** - Diffusion models (DIAMOND) for neural simulation
-4. **Advanced** - V-JEPA and driving world models with OpenDV
+4. **Advanced** - Driving world models (GAIA-1, OpenDV). For V-JEPA deep implementation, see `topics/jepa/`
 
 ## Commands
 
@@ -39,4 +39,4 @@ When implementing experiments, reference these codebases:
 - Phase 1: `world-models-jax` (JAX/Equinox)
 - Phase 2: `danijar/dreamerv3` (official JAX) or `NM512/dreamerv3-torch`
 - Phase 3: `eloialonso/diamond` (Diffusion world model)
-- Phase 4: `facebookresearch/jepa`, `wayveai/mile`
+- Phase 4: `wayveai/mile`, `waymo-research/waymax` (V-JEPA moved to `topics/jepa/`)

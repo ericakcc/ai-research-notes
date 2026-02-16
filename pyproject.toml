@@ -5,6 +5,7 @@ description = "Multi-topic ML/AI research and learning repository"
 requires-python = ">=3.12"
 dependencies = [
     "cma>=4.4.2",
+    "einops>=0.8.2",
     "gymnasium[box2d]>=1.2.3",
     "matplotlib>=3.10.8",
     "numpy>=2.4.2",
