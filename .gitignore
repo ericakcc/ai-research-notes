@@ -18,6 +18,10 @@ topics/**/papers/**/*.pdf
 # Corning proprietary docs
 topics/computer-vision/docs/康寧*.md
 
+# NYUAD application planning (personal)
+NYUAD_PROGRESS.md
+topics/NYUAD.md
+
 # Claude Code local settings
 .claude/settings.local.json
 
