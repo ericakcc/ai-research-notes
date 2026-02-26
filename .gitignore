@@ -11,6 +11,10 @@ wheels/
 
 # Datasets (large files, per topic)
 topics/**/datasets/
+topics/**/data/
+
+# Training artifacts
+topics/**/checkpoints/
 
 # Papers (PDFs - download separately)
 topics/**/papers/**/*.pdf

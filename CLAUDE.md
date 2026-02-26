@@ -15,7 +15,9 @@ A multi-topic ML/AI research and learning repository. Each topic is organized as
 | Vision Transformers | `topics/vision-transformers/` | Active | 基礎架構 |
 | Self-Supervised Learning | `topics/self-supervised-learning/` | Active | 第一階段 |
 | JEPA | `topics/jepa/` | Active | 第二階段 |
+| MLLM | `topics/mllm/` | Planned | JEPA 延伸 |
 | Reinforcement Learning | `topics/reinforcement-learning/` | Planned | 第三階段 |
+| Agent + Tool Use | `topics/agent-tool-use/` | Planned | 第三.五階段 |
 | Embodied AI | `topics/embodied-ai/` | Planned | 第三-四階段 |
 
 ## Commands
@@ -43,7 +45,9 @@ ai-research-notes/
 │   ├── vision-transformers/       # ViT, MAE implementations
 │   ├── self-supervised-learning/  # VICReg, SimCLR, Barlow Twins
 │   ├── jepa/                      # I-JEPA, V-JEPA, MC-JEPA
+│   ├── mllm/                      # CLIP, LLaVA, vision-language alignment (planned)
 │   ├── reinforcement-learning/    # PPO, SAC, JEPA+RL
+│   ├── agent-tool-use/            # ReAct agent, Anthropic tool use (planned)
 │   └── embodied-ai/              # Isaac Gym, Habitat, JEPA Navigator
 ├── NYUAD_PROGRESS.md              # NYUAD Research Engineer sprint progress
 ├── pyproject.toml                 # Shared dependencies
@@ -58,5 +62,7 @@ Each topic has its own `CLAUDE.md` with detailed instructions. When working on a
 - `topics/vision-transformers/CLAUDE.md` for Vision Transformers
 - `topics/self-supervised-learning/CLAUDE.md` for Self-Supervised Learning
 - `topics/jepa/CLAUDE.md` for JEPA
+- `topics/mllm/CLAUDE.md` for MLLM (Vision-Language)
 - `topics/reinforcement-learning/CLAUDE.md` for Reinforcement Learning
+- `topics/agent-tool-use/CLAUDE.md` for Agent + Tool Use
 - `topics/embodied-ai/CLAUDE.md` for Embodied AI

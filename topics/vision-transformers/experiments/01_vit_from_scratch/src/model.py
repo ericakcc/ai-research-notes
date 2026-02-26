@@ -98,7 +98,19 @@ class MultiHeadSelfAttention(nn.Module):
         Hint: Use `rearrange` from einops for reshaping.
               rearrange(tensor, "b n (h d) -> b h n d", h=self.heads)
         """
-        raise NotImplementedError("TODO(human): Implement MHSA forward pass")
+        # Project to Q, K, V and split into heads
+        q, k, v = self.qkv(x).chunk(3, dim=-1)                   # each: (B, n, dim)
+        q = rearrange(q, "b n (h d) -> b h n d", h=self.heads)   # (B, heads, n, head_dim)
+        k = rearrange(k, "b n (h d) -> b h n d", h=self.heads)
+        v = rearrange(v, "b n (h d) -> b h n d", h=self.heads)
+
+        # Scaled dot-product attention
+        attn = (q @ k.transpose(-2, -1)) * self.scale             # (B, heads, n, n)
+        attn = self.dropout(attn.softmax(dim=-1))
+
+        # Weighted sum and merge heads
+        out = rearrange(attn @ v, "b h n d -> b n (h d)")         # (B, n, dim)
+        return self.proj(out)
 
 
 class FeedForward(nn.Module):
