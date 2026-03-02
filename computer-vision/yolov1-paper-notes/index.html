@@ -1,0 +1,1628 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Paper summaries, experiment reports, and code walkthroughs across ML/AI topics">
+      
+      
+        <meta name="author" content="Eric Tsou">
+      
+      
+        <link rel="canonical" href="https://ericakcc.github.io/ai-research-notes/computer-vision/yolov1-paper-notes/">
+      
+      
+        <link rel="prev" href="../">
+      
+      
+        <link rel="next" href="../yolo-evolution/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.3">
+    
+    
+      
+        <title>YOLOv1 Paper Notes - Eric's AI Research Notes</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="https://unpkg.com/katex@0.16.11/dist/katex.min.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="teal">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#paper-summary-you-only-look-once-yolov1" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Eric&#39;s AI Research Notes" class="md-header__button md-logo" aria-label="Eric's AI Research Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Eric's AI Research Notes
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              YOLOv1 Paper Notes
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="teal"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="teal"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/ericakcc/ai-research-notes" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    ericakcc/ai-research-notes
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../vision-transformers/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Vision Transformers
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Computer Vision
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../world-models/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  World Models
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Eric&#39;s AI Research Notes" class="md-nav__button md-logo" aria-label="Eric's AI Research Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Eric's AI Research Notes
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/ericakcc/ai-research-notes" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    ericakcc/ai-research-notes
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../vision-transformers/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vision Transformers
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Vision Transformers
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../vision-transformers/attention-paper-notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Attention Is All You Need
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../vision-transformers/vit-paper-notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ViT Paper Notes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../vision-transformers/pretrain-vs-scratch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pretrain vs Scratch
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Computer Vision
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Computer Vision
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    YOLOv1 Paper Notes
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    YOLOv1 Paper Notes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#core-contribution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Core Contribution
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#method" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Method
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Method">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#grid-based-detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Grid-based Detection（核心機制）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#network-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Network Architecture
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Network Architecture">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        下採樣路徑（解析度變化）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#imagenet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ImageNet 預訓練
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#loss-functionmulti-part-sum-squared-error" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Loss Function（Multi-part Sum-Squared Error）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Loss Function（Multi-part Sum-Squared Error）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sse-cross-entropy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        為什麼用 SSE 而非 Cross-Entropy？
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        指示函數定義
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5 個組成部分
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inference（推理流程）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#training-details" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Training Details
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#key-results" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Results
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Key Results">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#error-analysishoiem-et-al" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Error Analysis（Hoiem et al. 方法論）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#generalization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Generalization（藝術品偵測）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#limitations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Limitations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#interview-qa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interview Q&amp;A
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../yolo-evolution/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    YOLO Evolution
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../world-models/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    World Models
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    World Models
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../world-models/vmc-pipeline/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VMC Pipeline
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#core-contribution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Core Contribution
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#method" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Method
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Method">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#grid-based-detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Grid-based Detection（核心機制）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#network-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Network Architecture
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Network Architecture">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        下採樣路徑（解析度變化）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#imagenet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ImageNet 預訓練
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#loss-functionmulti-part-sum-squared-error" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Loss Function（Multi-part Sum-Squared Error）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Loss Function（Multi-part Sum-Squared Error）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sse-cross-entropy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        為什麼用 SSE 而非 Cross-Entropy？
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        指示函數定義
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5 個組成部分
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inference（推理流程）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#training-details" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Training Details
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#key-results" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Results
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Key Results">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#error-analysishoiem-et-al" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Error Analysis（Hoiem et al. 方法論）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#generalization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Generalization（藝術品偵測）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#limitations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Limitations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#interview-qa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interview Q&amp;A
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="paper-summary-you-only-look-once-yolov1">Paper Summary: You Only Look Once (YOLOv1)<a class="headerlink" href="#paper-summary-you-only-look-once-yolov1" title="Permanent link">&para;</a></h1>
+<p><strong>Authors</strong>: Joseph Redmon, Santosh Divvala, Ross Girshick, Ali Farhadi
+<strong>arXiv</strong>: <a href="https://arxiv.org/abs/1506.02640">1506.02640</a>
+<strong>Year</strong>: 2016 (CVPR 2016)</p>
+<h2 id="core-contribution">Core Contribution<a class="headerlink" href="#core-contribution" title="Permanent link">&para;</a></h2>
+<p>將物件偵測重新定義為<strong>單一回歸問題</strong>（single regression problem），從影像像素直接預測 bounding box 座標和類別機率。一個神經網路、一次前向傳播完成所有偵測，打破了傳統多階段 pipeline（如 R-CNN: region proposal → classification → post-processing）的範式。</p>
+<h2 id="method">Method<a class="headerlink" href="#method" title="Permanent link">&para;</a></h2>
+<h3 id="grid-based-detection">Grid-based Detection（核心機制）<a class="headerlink" href="#grid-based-detection" title="Permanent link">&para;</a></h3>
+<ul>
+<li>將輸入影像切為 <strong>S × S grid</strong>（S=7）</li>
+<li>每個 grid cell 預測 <strong>B 個 bounding boxes</strong>（B=2）+ <strong>confidence scores</strong> + <strong>C 個類別條件機率</strong>（C=20 for VOC）</li>
+<li>每個 bounding box 包含 5 個預測值：<code>(x, y, w, h, confidence)</code><ul>
+<li><code>(x, y)</code>: box 中心相對於 grid cell 的偏移（bounded 0~1）</li>
+<li><code>(w, h)</code>: 相對於整張影像的寬高（normalized 0~1）</li>
+<li><code>confidence = Pr(Object) × IOU_pred^truth</code>（無物件時為 0，有物件時等於 predicted box 與 GT 的 IOU）</li>
+</ul>
+</li>
+<li>每個 grid cell 只預測<strong>一組</strong>類別條件機率 <code>Pr(Class_i|Object)</code>，與 B 個 box 共用</li>
+<li>最終輸出 tensor：<strong>7 × 7 × 30</strong>（= 7×7×(2×5 + 20)）</li>
+</ul>
+<h3 id="network-architecture">Network Architecture<a class="headerlink" href="#network-architecture" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>24 層 conv + 2 層 FC</strong>，靈感來自 GoogLeNet</li>
+<li>使用 1×1 reduction layers + 3×3 conv（而非 inception modules）</li>
+<li>激活函數：所有隱藏層用 <strong>Leaky ReLU</strong>（slope=0.1），最後一層用 <strong>linear activation</strong></li>
+<li>Fast YOLO：僅 9 層 conv + fewer filters，其餘訓練參數不變</li>
+</ul>
+<h4 id="_1">下採樣路徑（解析度變化）<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h4>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>448×448 → [7×7×64-s2 conv] → 224×224 → [maxpool] → 112×112
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>→ [3×3×192 conv + maxpool] → 56×56
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>→ [1×1×128, 3×3×256, 1×1×256, 3×3×512 + maxpool] → 28×28
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>→ [1×1×256, 3×3×512 ×4 + 1×1×512, 3×3×1024 + maxpool] → 14×14
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>→ [1×1×512, 3×3×1024 ×2 + 3×3×1024 + 3×3×1024-s2] → 7×7
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>→ [3×3×1024, 3×3×1024] → 7×7×1024
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>→ [FC 4096 → FC 7×7×30]
+</span></code></pre></div>
+<h4 id="imagenet">ImageNet 預訓練<a class="headerlink" href="#imagenet" title="Permanent link">&para;</a></h4>
+<ul>
+<li>前 20 層 conv + average-pooling + FC，在 ImageNet 1000 類訓練（224×224）</li>
+<li>約訓練<strong>一週</strong>，達到 88% top-5 accuracy（與 GoogLeNet 相當）</li>
+<li>使用 <strong>Darknet 框架</strong></li>
+<li>偵測時：加入 4 conv + 2 FC（隨機初始化），解析度提升至 448×448（因偵測需要更 fine-grained 的視覺資訊）</li>
+</ul>
+<h3 id="loss-functionmulti-part-sum-squared-error">Loss Function（Multi-part Sum-Squared Error）<a class="headerlink" href="#loss-functionmulti-part-sum-squared-error" title="Permanent link">&para;</a></h3>
+<h4 id="sse-cross-entropy">為什麼用 SSE 而非 Cross-Entropy？<a class="headerlink" href="#sse-cross-entropy" title="Permanent link">&para;</a></h4>
+<p>YOLO 將偵測框架為<strong>回歸問題</strong>（非分類），SSE 簡單易優化。但這是<strong>次優選擇</strong>：SSE 將定位誤差和分類誤差等權處理，且無法有效處理類別不平衡。後續版本 (v4+) 改用 Focal Loss / CIoU Loss。</p>
+<h4 id="_2">指示函數定義<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong><code>𝟙_ij^obj</code></strong>：cell i 的第 j 個 predictor 是「responsible predictor」（與 GT 的 IOU 最高的那個）</li>
+<li><strong><code>𝟙_i^obj</code></strong>：物件中心落在 cell i（cell 包含物件）</li>
+<li><strong><code>𝟙_ij^noobj</code></strong>：cell i 的第 j 個 predictor 不負責任何物件</li>
+</ul>
+<h4 id="5">5 個組成部分<a class="headerlink" href="#5" title="Permanent link">&para;</a></h4>
+<ol>
+<li><strong>Box 中心座標 loss</strong>（x, y）：僅 responsible predictor 計算，權重 λ_coord=5</li>
+<li><strong>Box 尺寸 loss</strong>（√w, √h）：僅 responsible predictor 計算，權重 λ_coord=5<ul>
+<li>用平方根緩解大小 box 的不均衡（大 box 梯度 ∝ 1/(2√w)，自然變小）</li>
+</ul>
+</li>
+<li><strong>有物件的 confidence loss</strong>：僅 responsible predictor，target = IOU(pred, GT)</li>
+<li><strong>無物件的 confidence loss</strong>：所有非 responsible predictor，權重 λ_noobj=0.5（抑制大量負樣本梯度，避免模型不穩定）</li>
+<li><strong>類別機率 loss</strong>：僅在包含物件的 cell 計算（<code>𝟙_i^obj</code>），與 predictor 無關</li>
+</ol>
+<p><strong>關鍵</strong>：座標 loss 用 <code>𝟙_ij^obj</code>（predictor 層級），分類 loss 用 <code>𝟙_i^obj</code>（cell 層級）</p>
+<h3 id="inference">Inference（推理流程）<a class="headerlink" href="#inference" title="Permanent link">&para;</a></h3>
+<ul>
+<li>每張影像預測 <strong>98 個 bounding boxes</strong>（7×7×2 = 98）</li>
+<li>Test-time class-specific score（用於排序和 NMS）：
+  <code>Pr(Class_i|Object) × Pr(Object) × IOU_pred^truth = Pr(Class_i) × IOU_pred^truth</code></li>
+<li><strong>NMS（Non-Maximum Suppression）</strong>：<ul>
+<li>Grid 設計本身強制空間多樣性，大幅減少重複偵測</li>
+<li>NMS 對 YOLO 不像 R-CNN/DPM 那麼關鍵，但仍提升 <strong>2-3% mAP</strong></li>
+<li>主要處理：大物件或跨 cell 邊界物件被多個 cell 偵測的情況</li>
+</ul>
+</li>
+</ul>
+<h3 id="training-details">Training Details<a class="headerlink" href="#training-details" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Dataset: PASCAL VOC 2007+2012，~135 epochs</li>
+<li>Batch size: 64, momentum: 0.9, weight decay: 0.0005</li>
+<li>LR schedule: 先從 10⁻³ <strong>慢慢 warmup</strong> 升至 10⁻²（避免初期不穩定 gradients 導致 diverge）→ 維持 75 epochs → 10⁻³ 30 epochs → 10⁻⁴ 30 epochs</li>
+<li>Regularization: Dropout (0.5, 僅在第一個 FC 層後) + data augmentation（random scaling/translation ±20%, HSV exposure/saturation shift ×1.5）</li>
+<li><strong>Responsible predictor 機制</strong>：每個 grid cell 中，IOU 最高的 box predictor 負責該物件 → predictor specialization（各自學習特定 size/aspect ratio/class）</li>
+</ul>
+<h2 id="key-results">Key Results<a class="headerlink" href="#key-results" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>mAP (VOC 2007)</th>
+<th>FPS</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Fast YOLO</td>
+<td>52.7%</td>
+<td><strong>155</strong></td>
+</tr>
+<tr>
+<td>YOLO</td>
+<td><strong>63.4%</strong></td>
+<td>45</td>
+</tr>
+<tr>
+<td>YOLO VGG-16</td>
+<td>66.4%</td>
+<td>21</td>
+</tr>
+<tr>
+<td>Fast R-CNN</td>
+<td>70.0%</td>
+<td>0.5</td>
+</tr>
+<tr>
+<td>Faster R-CNN VGG-16</td>
+<td>73.2%</td>
+<td>7</td>
+</tr>
+<tr>
+<td>Faster R-CNN ZF</td>
+<td>62.1%</td>
+<td>18</td>
+</tr>
+</tbody>
+</table>
+<h3 id="error-analysishoiem-et-al">Error Analysis（Hoiem et al. 方法論）<a class="headerlink" href="#error-analysishoiem-et-al" title="Permanent link">&para;</a></h3>
+<p>五種錯誤類型定義：</p>
+<ul>
+<li><strong>Correct</strong>：正確類別 + IOU &gt; 0.5</li>
+<li><strong>Localization</strong>：正確類別 + 0.1 &lt; IOU &lt; 0.5</li>
+<li><strong>Similar</strong>：相似類別 + IOU &gt; 0.1</li>
+<li><strong>Other</strong>：錯誤類別 + IOU &gt; 0.1</li>
+<li><strong>Background</strong>：IOU &lt; 0.1（任何物件）</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Error Type</th>
+<th>YOLO</th>
+<th>Fast R-CNN</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Correct</td>
+<td>65.5%</td>
+<td>71.6%</td>
+</tr>
+<tr>
+<td><strong>Localization</strong></td>
+<td><strong>19.0%</strong></td>
+<td>8.6%</td>
+</tr>
+<tr>
+<td>Similar</td>
+<td>6.75%</td>
+<td>4.3%</td>
+</tr>
+<tr>
+<td>Other</td>
+<td>4.0%</td>
+<td>1.9%</td>
+</tr>
+<tr>
+<td><strong>Background</strong></td>
+<td><strong>4.75%</strong></td>
+<td><strong>13.6%</strong></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>YOLO 定位錯誤佔所有錯誤的比重<strong>超過其他所有來源之和</strong></li>
+<li>Fast R-CNN 的背景誤檢是 YOLO 的 <strong>~3 倍</strong></li>
+<li><strong>Fast R-CNN + YOLO 組合</strong>：mAP 從 71.8% → <strong>75.0%</strong>（+3.2%），因兩者錯誤模式互補</li>
+</ul>
+<h3 id="generalization">Generalization（藝術品偵測）<a class="headerlink" href="#generalization" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Dataset</th>
+<th>YOLO AP</th>
+<th>R-CNN AP</th>
+<th>DPM AP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VOC 2007 (person)</td>
+<td>59.2</td>
+<td>54.2</td>
+<td>43.2</td>
+</tr>
+<tr>
+<td>Picasso</td>
+<td><strong>53.3</strong></td>
+<td>10.4</td>
+<td>37.8</td>
+</tr>
+<tr>
+<td>People-Art</td>
+<td><strong>45</strong></td>
+<td>26</td>
+<td>32</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>R-CNN 在藝術品上 AP 暴跌（54.2 → 10.4）：Selective Search 針對自然影像調優，在藝術品上產生糟糕的 proposals</li>
+<li>YOLO 建模 <strong>size/shape/relationships + objects 常見位置</strong>，這些特徵在自然影像和藝術品中一致</li>
+</ul>
+<h2 id="limitations">Limitations<a class="headerlink" href="#limitations" title="Permanent link">&para;</a></h2>
+<ol>
+<li><strong>空間約束</strong>：每個 grid cell 只能預測 2 個 box、<strong>1 個類別</strong> → 無法處理密集小物件（如鳥群）或同 cell 多類別物件</li>
+<li><strong>Recall 上限低</strong>：僅 98 個 boxes，遠少於 Selective Search (~2000) → recall 上限受限</li>
+<li><strong>小物件偵測差</strong>：5 次 maxpool + 1 次 stride-2 conv（共 64x 下採樣），小物件特徵被消除</li>
+<li><strong>定位精度不足</strong>：SSE loss 對大小 box 誤差處理不完善（雖用 √w/√h 「partially address」，但仍是主要錯誤來源）</li>
+<li><strong>泛化到不尋常 aspect ratio 困難</strong>：直接回歸 w/h 沒有 prior，學習負擔大</li>
+</ol>
+<h2 id="interview-qa">Interview Q&amp;A<a class="headerlink" href="#interview-qa" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>「為何 YOLO 比 R-CNN 快？」</strong>：單次前向傳播 vs. 2000+ region proposals 各自分類。YOLO 丟掉整個 pipeline，用回歸取代</li>
+<li><strong>「YOLO 的 grid 設計有什麼好處？」</strong>：強制空間多樣性、減少重複偵測、全局推理（global reasoning）→ 背景誤檢低</li>
+<li><strong>「YOLO 主要的 error type 是什麼？」</strong>：localization error (19%)，而非 background false positive (4.75%)。Fast R-CNN 剛好相反</li>
+<li><strong>「為何用 √w/√h？」</strong>：大 box (w=100) 梯度 ∝ 1/20，小 box (w=10) 梯度 ∝ 1/6.3，自然讓模型更關注小 box 的精度</li>
+<li><strong>「兩個物件在同一 grid cell 會怎樣？」</strong>：只能偵測一個（只有 1 組類別機率）。v2 的 anchor boxes 解耦 class 和 spatial，改善此問題</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/ericakcc" target="_blank" rel="noopener" title="GitHub" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.expand", "navigation.top", "navigation.indexes", "search.suggest", "search.highlight", "search.share", "content.code.copy", "content.code.annotate", "content.tabs.link"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../../javascripts/katex.js"></script>
+      
+        <script src="https://unpkg.com/katex@0.16.11/dist/katex.min.js"></script>
+      
+        <script src="https://unpkg.com/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+      
+    
+  </body>
+</html>
