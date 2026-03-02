@@ -1,0 +1,69 @@
+site_name: Eric's AI Research Notes
+site_description: Paper summaries, experiment reports, and code walkthroughs across ML/AI topics
+site_author: Eric Tsou
+site_url: https://ericakcc.github.io/ai-research-notes/
+
+repo_name: ericakcc/ai-research-notes
+repo_url: https://github.com/ericakcc/ai-research-notes
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: teal
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: teal
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+  icon:
+    repo: fontawesome/brands/github
+
+nav:
+  - Home: index.md
+  - Vision Transformers:
+      - Overview: vision-transformers/index.md
+      - "Attention Is All You Need": vision-transformers/attention-paper-notes.md
+      - "ViT Paper Notes": vision-transformers/vit-paper-notes.md
+      - "Pretrain vs Scratch": vision-transformers/pretrain-vs-scratch.md
+  - Computer Vision:
+      - Overview: computer-vision/index.md
+      - "YOLOv1 Paper Notes": computer-vision/yolov1-paper-notes.md
+      - "YOLO Evolution": computer-vision/yolo-evolution.md
+  - World Models:
+      - Overview: world-models/index.md
+      - "VMC Pipeline": world-models/vmc-pipeline.md
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
+  - toc:
+      permalink: true
+  - tables
+  - attr_list
+  - md_in_html
+
+plugins:
+  - search

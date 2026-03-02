@@ -35,5 +35,8 @@ topics/**/CLAUDE.md
 .idea/
 .vscode/
 
+# MkDocs build output
+site/
+
 # macOS
 .DS_Store
