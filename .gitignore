@@ -28,6 +28,8 @@ topics/NYUAD.md
 
 # Claude Code local settings
 .claude/settings.local.json
+CLAUDE.md
+topics/**/CLAUDE.md
 
 # IDE
 .idea/
