@@ -26,8 +26,8 @@ topics/computer-vision/docs/康寧*.md
 NYUAD_PROGRESS.md
 topics/NYUAD.md
 
-# Claude Code local settings
-.claude/settings.local.json
+# Claude Code (personal workflow config)
+.claude/
 CLAUDE.md
 topics/**/CLAUDE.md
 
