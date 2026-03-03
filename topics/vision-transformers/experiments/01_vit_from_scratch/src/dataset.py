@@ -10,16 +10,28 @@ CIFAR10_MEAN = (0.4914, 0.4822, 0.4465)
 CIFAR10_STD = (0.2470, 0.2435, 0.2616)
 
 
-def get_train_transform() -> transforms.Compose:
-    """Training transforms with augmentation."""
-    return transforms.Compose(
+def get_train_transform(
+    *, use_randaugment: bool = False
+) -> transforms.Compose:
+    """Training transforms with augmentation.
+
+    Args:
+        use_randaugment: If True, apply RandAugment(num_ops=2, magnitude=9)
+            after random crop.
+    """
+    ops: list[transforms.transforms.Transform] = [
+        transforms.RandomCrop(32, padding=4),
+        transforms.RandomHorizontalFlip(),
+    ]
+    if use_randaugment:
+        ops.append(transforms.RandAugment(num_ops=2, magnitude=9))
+    ops.extend(
         [
-            transforms.RandomCrop(32, padding=4),
-            transforms.RandomHorizontalFlip(),
             transforms.ToTensor(),
             transforms.Normalize(CIFAR10_MEAN, CIFAR10_STD),
         ]
     )
+    return transforms.Compose(ops)
 
 
 def get_val_transform() -> transforms.Compose:
@@ -38,6 +50,8 @@ def get_dataloaders(
     num_workers: int = 4,
     data_dir: str = "./data",
     val_split: float = 0.1,
+    pin_memory: bool = True,
+    use_randaugment: bool = False,
 ) -> tuple[DataLoader, DataLoader, DataLoader]:
     """Create train, validation, and test dataloaders.
 
@@ -47,12 +61,17 @@ def get_dataloaders(
         num_workers: Number of data loading workers.
         data_dir: Directory to download/store CIFAR-10.
         val_split: Fraction of training data for validation.
+        pin_memory: Pin memory for GPU transfer.
+        use_randaugment: If True, apply RandAugment in training transforms.
 
     Returns:
         Tuple of (train_loader, val_loader, test_loader).
     """
     full_train = datasets.CIFAR10(
-        root=data_dir, train=True, download=True, transform=get_train_transform()
+        root=data_dir,
+        train=True,
+        download=True,
+        transform=get_train_transform(use_randaugment=use_randaugment),
     )
 
     # Split training set into train/val
